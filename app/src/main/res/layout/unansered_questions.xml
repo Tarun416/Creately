@@ -1,80 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="@dimen/margin16"
+    android:layout_marginRight="@dimen/margin16"
+    android:layout_marginTop="8dp"
+    android:padding="8dp"
+    app:cardCornerRadius="4dp">
 
-   <ImageView
-       android:id="@+id/profiileImage"
-       android:layout_marginLeft="@dimen/margin16"
-       android:layout_marginTop="@dimen/margin16"
-       android:layout_width="100dp"
-       tools:src="@mipmap/app_icon"
-       android:layout_height="100dp" />
-
-
-    <TextView
-        android:id="@+id/questionDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/margin16"
-        android:layout_toRightOf="@+id/profiileImage"
-        android:layout_marginTop="@dimen/margin16"
-        android:maxLines="4"
-        tools:text="how to use recycler view in android?"
-        android:layout_marginLeft="@dimen/margin16"/>
-
-
-    <TextView
-        android:id="@+id/tags"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/margin16"
-        android:layout_toRightOf="@+id/profiileImage"
-        android:layout_marginTop="@dimen/margin16"
-        android:layout_below="@+id/questionDescription"
-        tools:text="#android #java"
-        android:layout_marginLeft="@dimen/margin16"/>
-
-
-    <TextView
-        android:id="@+id/rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tags"
-        android:layout_toRightOf="@+id/profiileImage"
-        tools:text="Rating : 3"
-        android:layout_marginLeft="@dimen/margin16"
-        android:layout_marginTop="@dimen/margin16"
-        android:layout_marginRight="@dimen/margin16"/>
-
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profiileImage"
-        android:layout_marginLeft="@dimen/margin16"
-        android:gravity="center"
-        android:layout_marginRight="@dimen/margin16"
-        android:layout_marginTop="@dimen/margin16"
-        android:weightSum="2">
+        android:layout_height="wrap_content">
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/black">
+
+
+            <TextView
+                android:id="@+id/timeStamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:visibility="gone"
+                tools:text="15 jan 1993" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/profiileImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="@dimen/margin8"
+            android:layout_marginTop="@dimen/margin16"
+            tools:src="@mipmap/app_icon" />
+
+
+        <TextView
+            android:id="@+id/questionDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin16"
+            android:layout_marginRight="@dimen/margin8"
+            android:layout_marginTop="@dimen/margin16"
+            android:layout_toRightOf="@+id/profiileImage"
+            android:maxLines="4"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="how to use recycler view in android?" />
+
+
+        <TextView
+            android:id="@+id/tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/questionDescription"
+            android:layout_marginLeft="@dimen/margin16"
+            android:layout_marginRight="@dimen/margin8"
+            android:layout_marginTop="@dimen/margin16"
+            android:layout_toRightOf="@+id/profiileImage"
+            android:maxLines="2"
+            android:textSize="12sp"
+            tools:text="#android #java" />
+
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tags"
+            android:layout_marginLeft="@dimen/margin16"
+            android:layout_marginRight="@dimen/margin8"
+            android:layout_marginTop="@dimen/margin16"
+            android:layout_toRightOf="@+id/profiileImage"
+            android:textSize="12sp"
+            tools:text="Rating : 3" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rating"
+            android:layout_marginBottom="@dimen/margin8"
+            android:layout_marginLeft="@dimen/margin8"
+            android:layout_marginRight="@dimen/margin8"
+            android:layout_marginTop="@dimen/margin16"
             android:gravity="center"
-            android:text="Like"
-            android:layout_marginRight="@dimen/margin16"
-            android:layout_height="48dp" />
-
-        <Button
-            android:layout_width="0dp"
-            android:gravity="center"
-            android:text="Share"
-            android:layout_height="48dp"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
+            android:weightSum="2">
 
 
-</RelativeLayout>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/margin16"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:gravity="center"
+                android:src="@drawable/heart_outline"
+                android:textColor="@android:color/white" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/margin16"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:gravity="center"
+                android:src="@drawable/ic_share_black"
+                android:textColor="@android:color/white" />
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

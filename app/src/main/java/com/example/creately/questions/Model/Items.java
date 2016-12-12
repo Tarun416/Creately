@@ -1,5 +1,7 @@
 package com.example.creately.questions.Model;
 
+import java.util.ArrayList;
+
 /**
  * Created by rahul on 08/12/16.
  */
@@ -7,7 +9,7 @@ public class Items
 {
     private String creation_date;
 
-    private String[] tags;
+    private ArrayList<String> tags;
 
     private String title;
 
@@ -37,12 +39,12 @@ public class Items
         this.creation_date = creation_date;
     }
 
-    public String[] getTags ()
+    public ArrayList<String> getTags ()
     {
         return tags;
     }
 
-    public void setTags (String[] tags)
+    public void setTags (ArrayList<String> tags)
     {
         this.tags = tags;
     }

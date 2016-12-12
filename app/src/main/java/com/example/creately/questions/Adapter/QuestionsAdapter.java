@@ -14,7 +14,11 @@ import com.example.creately.R;
 import com.example.creately.questions.Model.Items;
 import com.example.creately.questions.Model.Questions;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Formatter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,7 +28,6 @@ import butterknife.ButterKnife;
  */
 
 public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.ViewHolder> {
-
 
 
     private Context context;
@@ -53,16 +56,23 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         holder.questionDescription.setText(items.getTitle());
         holder.rating.setText("Rating : " + items.getScore());
         Glide.with(context).load(items.getOwner().getProfile_image()).into(holder.profiileImage);
-       for(int i=0;i<items.getTags().length;i++)
-       {
-
-       }
+        for (int i = 0; i < items.getTags().size(); i++) {
+            holder.tags.append(items.getTags().get(i)+" ");
+        }
+        holder.timeStamp.setText(convertTime(Long.parseLong(items.getCreation_date())));
 
     }
 
+    private String convertTime(Long creation_date) {
+        Date date=new Date(creation_date);
+        Format format=new SimpleDateFormat("dd MMMM yyyy  HH:mm");
+        return format.format(date);
+    }
+
+
     @Override
     public int getItemCount() {
-        Log.d("size",questionItems.size()+"");
+        Log.d("size", questionItems.size() + "");
         return questionItems.size();
     }
 
@@ -78,10 +88,12 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         @BindView(R.id.rating)
         TextView rating;
 
+        @BindView(R.id.timeStamp)
+        TextView timeStamp;
         public ViewHolder(View itemView) {
             super(itemView);
-            this.itemView=itemView;
-            ButterKnife.bind(this,itemView);
+            this.itemView = itemView;
+            ButterKnife.bind(this, itemView);
 
 
         }
