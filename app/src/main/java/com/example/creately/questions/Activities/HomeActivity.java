@@ -75,8 +75,6 @@ public class HomeActivity extends AppCompatActivity {
                 questionItems = questions.getItems();
                 questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems);
                 recyclerView.setAdapter(questionsAdapter);
-
-
             }
 
             @Override
@@ -94,9 +92,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu,menu);
-
         return true;
-
     }
 
     @Override
@@ -105,7 +101,6 @@ public class HomeActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.search:
                loadToolbarSearch();
-
         }
         return super.onOptionsItemSelected(item);
     }
