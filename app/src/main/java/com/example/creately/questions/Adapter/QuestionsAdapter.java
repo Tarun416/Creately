@@ -11,14 +11,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.creately.R;
-import com.example.creately.questions.Model.Items;
-import com.example.creately.questions.Model.Questions;
+import com.example.creately.questions.Model.UnansweredQues.Items;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Formatter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

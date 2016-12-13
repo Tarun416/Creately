@@ -32,7 +32,7 @@
             android:textSize="16sp"/>
 
         <ImageView
-            android:id="@+id/img_tool_mic"
+            android:id="@+id/ic_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_close"/>

@@ -1,4 +1,4 @@
-package com.example.creately.questions.Model;
+package com.example.creately.questions.Model.UnansweredQues;
 
 import java.util.ArrayList;
 

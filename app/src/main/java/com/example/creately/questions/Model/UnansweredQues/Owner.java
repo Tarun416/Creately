@@ -1,4 +1,4 @@
-package com.example.creately.questions.Model;
+package com.example.creately.questions.Model.UnansweredQues;
 
 /**
  * Created by rahul on 08/12/16.

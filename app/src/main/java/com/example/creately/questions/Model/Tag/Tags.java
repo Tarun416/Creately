@@ -1,12 +1,12 @@
-package com.example.creately.questions.Model;
+package com.example.creately.questions.Model.Tag;
 
 import java.util.ArrayList;
 
 /**
- * Created by rahul on 08/12/16.
+ * Created by rahul on 13/12/16.
  */
 
-public class Questions
+public class Tags
 {
     private String quota_max;
 
