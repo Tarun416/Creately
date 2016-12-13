@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.creately.R;
+import com.example.creately.questions.Interface.OnItemClickListener;
 import com.example.creately.questions.Model.Tag.Items;
 
 import java.util.ArrayList;
@@ -24,11 +25,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     private Context context;
     private ArrayList<Items> tagItems;
+    private OnItemClickListener onItemClickListener;
 
 
-    public SearchAdapter(Context context, ArrayList<Items> items) {
+    public SearchAdapter(Context context, ArrayList<Items> items, OnItemClickListener onClickListener) {
         this.context = context;
         this.tagItems = items;
+        this.onItemClickListener=onClickListener;
     }
 
 
@@ -41,7 +44,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tagname.setText(tagItems.get(position).getName());
+
+        holder.bind(tagItems.get(position),onItemClickListener,position);
     }
 
     @Override
@@ -62,6 +66,19 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
+
+        }
+
+        public void bind(Items items, final OnItemClickListener onItemClickListener, final int position) {
+            tagname.setText(items.getName());
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(position);
+                }
+            });
+
         }
     }
 }

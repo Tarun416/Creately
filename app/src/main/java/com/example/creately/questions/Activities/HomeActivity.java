@@ -1,8 +1,6 @@
 package com.example.creately.questions.Activities;
 
 import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +23,7 @@ import com.example.creately.R;
 import com.example.creately.questions.Adapter.QuestionsAdapter;
 import com.example.creately.questions.Adapter.SearchAdapter;
 import com.example.creately.questions.ApiInterface.StackExchange;
+import com.example.creately.questions.Interface.OnItemClickListener;
 import com.example.creately.questions.Model.Tag.Tags;
 import com.example.creately.questions.Model.UnansweredQues.Items;
 import com.example.creately.questions.Model.UnansweredQues.Questions;
@@ -62,12 +61,14 @@ public class HomeActivity extends AppCompatActivity  {
     private static String SITE = "stackoverflow.com";
     private SearchAdapter searchAdapter;
     private Dialog toolbarSearchDialog;
+    private RecyclerView listSearch;
+    private  ArrayList<com.example.creately.questions.Model.Tag.Items> filterList;
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
         if(toolbarSearchDialog!=null)
-        toolbarSearchDialog.dismiss();
+            toolbarSearchDialog.dismiss();
     }
 
     @Override
@@ -79,7 +80,7 @@ public class HomeActivity extends AppCompatActivity  {
         questionItems = new ArrayList<Items>();
         setToolbar();
         setRecyclerView();
-        hitApi();
+        hitApi("android");
     }
     private void setToolbar() {
         if (toolbar != null) {
@@ -88,11 +89,11 @@ public class HomeActivity extends AppCompatActivity  {
         }
     }
 
-    private void hitApi() {
+    private void hitApi(String name) {
 
-       rotateloading.start();
+        rotateloading.start();
         stackExchangeApi = createService(StackExchange.class);
-        stackExchangeApi.getAndroidUnansweredQueastion("android", SITE, new Callback<Questions>() {
+        stackExchangeApi.getAndroidUnansweredQueastion(name, SITE, new Callback<Questions>() {
             @Override
             public void success(Questions questions, Response response) {
                 rotateloading.stop();
@@ -140,7 +141,8 @@ public class HomeActivity extends AppCompatActivity  {
 
 
         final EditText edtToolSearch = (EditText) view.findViewById(R.id.edt_tool_search);
-        final RecyclerView listSearch = (RecyclerView) view.findViewById(R.id.list_search);
+
+        listSearch = (RecyclerView) view.findViewById(R.id.list_search);
         final TextView txtEmpty = (TextView) view.findViewById(R.id.txt_empty);
 
 
@@ -159,10 +161,26 @@ public class HomeActivity extends AppCompatActivity  {
                 toolbarSearchDialog.dismiss();
             }
         });
-
+        filterList=tagItems;
         tagItems = (tagItems != null && tagItems.size() > 0) ? tagItems : new ArrayList<com.example.creately.questions.Model.Tag.Items>();
-        searchAdapter = new SearchAdapter(HomeActivity.this, tagItems);
+        searchAdapter = new SearchAdapter(HomeActivity.this, tagItems, new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+                toolbarSearchDialog.dismiss();
+                rotateloading.start();
+                if(filterList!=null && filterList.size()>0)
+                {
+                    hitApi(filterList.get(position).getName());
+                }
+
+
+            }
+        });
         listSearch.setVisibility(View.VISIBLE);
+        listSearch.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        listSearch.setLayoutManager(linearLayoutManager);
         listSearch.setAdapter(searchAdapter);
 
 
@@ -176,17 +194,16 @@ public class HomeActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ArrayList<com.example.creately.questions.Model.Tag.Items> filterList = new ArrayList<com.example.creately.questions.Model.Tag.Items>();
+
+                filterList = new ArrayList<com.example.creately.questions.Model.Tag.Items>();
                 boolean isNodata = false;
                 if (s.length() > 0) {
                     for (int i = 0; i < tagItems.size(); i++) {
 
                         if (tagItems.get(i).getName().toLowerCase().startsWith(s.toString().trim().toLowerCase())) {
-
                             filterList.add(tagItems.get(i));
-
                             listSearch.setVisibility(View.VISIBLE);
-                            searchAdapter.updateList(filterList, true);
+                            searchAdapter.updateList(filterList,true);
                             isNodata = true;
                         }
                     }
@@ -194,6 +211,10 @@ public class HomeActivity extends AppCompatActivity  {
                         listSearch.setVisibility(View.GONE);
                         txtEmpty.setVisibility(View.VISIBLE);
                         txtEmpty.setText("No data found");
+                    }
+                    else
+                    {
+                        txtEmpty.setVisibility(View.GONE);
                     }
                 } else {
                     listSearch.setVisibility(View.GONE);
@@ -206,14 +227,22 @@ public class HomeActivity extends AppCompatActivity  {
 
             }
         });
+
+
+
     }
+
+
+
+
+
+
 
     private void getTags() {
         stackExchangeApi.getTags(SITE, new Callback<Tags>() {
             @Override
             public void success(Tags tagModel, Response response) {
                 tagItems = tagModel.getItems();
-                //  inflateSearchView();
             }
             @Override
             public void failure(RetrofitError error) {
