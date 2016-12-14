@@ -44,5 +44,6 @@
     <color name="green_theme_dark">#00715C</color>
     <color name="green_theme_pink">#AF3F3F</color>
     <color name="transparent">#00000000</color>
+    <color name="text_title_color">#D9000000</color>
 
 </resources>

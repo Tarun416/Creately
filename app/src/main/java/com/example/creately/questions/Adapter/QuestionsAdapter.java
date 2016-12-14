@@ -12,11 +12,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.creately.R;
 import com.example.creately.questions.Model.UnansweredQues.Items;
+import com.example.creately.questions.Utils.CommonUtils;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.ArrayList;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,14 +58,8 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         for (int i = 0; i < items.getTags().size(); i++) {
             holder.tags.append(items.getTags().get(i)+" ");
         }
-        holder.timeStamp.setText(convertTime(Long.parseLong(items.getCreation_date())));
+        holder.timeStamp.setText(CommonUtils.toRelativeTime(new DateTime(Long.parseLong(items.getLast_activity_date()) * 1000, DateTimeZone.getDefault())));
 
-    }
-
-    private String convertTime(Long creation_date) {
-        Date date=new Date(creation_date);
-        Format format=new SimpleDateFormat("dd MMMM yyyy  HH:mm");
-        return format.format(date);
     }
 
 
