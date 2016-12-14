@@ -1,10 +1,12 @@
 package com.example.creately.questions.Model.Tag;
 
+import java.io.Serializable;
+
 /**
  * Created by rahul on 13/12/16.
  */
 
-public class Items
+public class Items implements Serializable
 {
     private String has_synonyms;
 

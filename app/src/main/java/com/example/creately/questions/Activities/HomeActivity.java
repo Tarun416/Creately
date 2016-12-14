@@ -28,9 +28,7 @@ import com.example.creately.questions.Model.Tag.Tags;
 import com.example.creately.questions.Model.UnansweredQues.Items;
 import com.example.creately.questions.Model.UnansweredQues.Questions;
 import com.victor.loading.rotate.RotateLoading;
-
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit.Callback;
@@ -63,12 +61,12 @@ public class HomeActivity extends AppCompatActivity  {
     private Dialog toolbarSearchDialog;
     private RecyclerView listSearch;
     private  ArrayList<com.example.creately.questions.Model.Tag.Items> filterList;
+    private View view;
+    private WindowManager windowManager;
 
     @Override
     public void onBackPressed() {
-
-        if(toolbarSearchDialog!=null)
-            toolbarSearchDialog.dismiss();
+        removeInflatedView();
     }
 
     @Override
@@ -77,11 +75,25 @@ public class HomeActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(HomeActivity.this);
 
-        questionItems = new ArrayList<Items>();
         setToolbar();
         setRecyclerView();
-        hitApi("android");
+        if(savedInstanceState!=null && savedInstanceState.getSerializable("ITEMS")!=null) {
+            questionItems = new ArrayList<Items>();
+            questionItems= (ArrayList<Items>) savedInstanceState.getSerializable("ITEMS");
+            setAdapterForQuestions();
+        }
+       else {
+            questionItems = new ArrayList<Items>();
+            hitApi("android");
+        }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("ITEMS",questionItems);
+    }
+
     private void setToolbar() {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -98,8 +110,8 @@ public class HomeActivity extends AppCompatActivity  {
             public void success(Questions questions, Response response) {
                 rotateloading.stop();
                 questionItems = questions.getItems();
-                questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems);
-                recyclerView.setAdapter(questionsAdapter);
+                setAdapterForQuestions();
+
             }
 
             @Override
@@ -108,6 +120,12 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
     }
+
+    private void setAdapterForQuestions() {
+        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems);
+        recyclerView.setAdapter(questionsAdapter);
+    }
+
 
     private void setRecyclerView() {
         LinearLayoutManager linearLayoutManger = new LinearLayoutManager(this);
@@ -118,6 +136,18 @@ public class HomeActivity extends AppCompatActivity  {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu, menu);
         return true;
+    }
+
+
+    public void removeInflatedView()
+    {
+        if(view!=null) {
+            toolbarSearchDialog.dismiss();
+            windowManager.removeView(view);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -136,7 +166,8 @@ public class HomeActivity extends AppCompatActivity  {
     }
 
     private void inflateSearchView() {
-        View view = HomeActivity.this.getLayoutInflater().inflate(R.layout.view_toolbar_search, null);
+
+        view =HomeActivity.this.getLayoutInflater().inflate(R.layout.view_toolbar_search, null);
         ImageView imgCancel = (ImageView) view.findViewById(R.id.ic_close);
 
 
@@ -228,17 +259,11 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
-
-
     }
 
-
-
-
-
-
-
     private void getTags() {
+        if(stackExchangeApi==null)
+            stackExchangeApi=createService(StackExchange.class);
         stackExchangeApi.getTags(SITE, new Callback<Tags>() {
             @Override
             public void success(Tags tagModel, Response response) {

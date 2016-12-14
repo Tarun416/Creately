@@ -1,12 +1,13 @@
 package com.example.creately.questions.Model.UnansweredQues;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by rahul on 08/12/16.
  */
 
-public class Questions
+public class Questions implements Serializable
 {
     private String quota_max;
 

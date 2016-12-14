@@ -1,11 +1,12 @@
 package com.example.creately.questions.Model.UnansweredQues;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by rahul on 08/12/16.
  */
-public class Items
+public class Items implements Serializable
 {
     private String creation_date;
 
