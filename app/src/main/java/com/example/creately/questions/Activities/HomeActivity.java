@@ -3,6 +3,7 @@ package com.example.creately.questions.Activities;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -21,7 +22,6 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -77,9 +77,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private WindowManager windowManager;
     private String[] items = {"Activity", "Creation", "Votes", "Relevance"};
     private String tag;
-    private String sort1;
+    private String sortname;
     private LinearLayoutManager linearLayoutManger;
     private EndlessRecyclerOnScrollListener endlessScrollListener;
+    private Handler handler;
 
     @Override
     public void onBackPressed() {
@@ -93,7 +94,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ButterKnife.bind(HomeActivity.this);
         setToolbar();
         floatingbutton.setOnClickListener(this);
+        handler=new Handler();
         setRecylerView(savedInstanceState);
+
+        if (savedInstanceState != null && savedInstanceState.getSerializable("ITEMS") != null) {
+            questionItems.addAll((ArrayList<Items>) savedInstanceState.getSerializable("ITEMS"));
+            questionsAdapter.notifyDataSetChanged();
+        } else {
+            hitApi(null, "android", 1);
+        }
 
     }
 
@@ -104,22 +113,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onLoadMore(int current_page) {
                 Log.d("endlessscroll",current_page+"");
-                hitApi(sort1, tag, current_page);
+                hitApi(sortname, tag, current_page);
             }
         };
         recyclerView.setLayoutManager(linearLayoutManger);
-       recyclerView.addOnScrollListener(endlessScrollListener);
-        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems);
+        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems,recyclerView);
         recyclerView.setAdapter(questionsAdapter);
 
+        questionsAdapter.setOnMoreLoadListener(new QuestionsAdapter.OnMoreLoadListener() {
+            @Override
+            public void onLoadMore() {
+                //add progress item
+                questionItems.add(null);
+                questionsAdapter.notifyItemInserted(questionItems.size() - 1);
 
-        if (savedInstanceState != null && savedInstanceState.getSerializable("ITEMS") != null) {
-            questionItems.addAll((ArrayList<Items>) savedInstanceState.getSerializable("ITEMS"));
-           // recyclerView.setAdapter(questionsAdapter);
-            questionsAdapter.notifyDataSetChanged();
-        } else {
-            hitApi(null, "android", 1);
-        }
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //remove progress item
+                        questionItems.remove(questionItems.size() - 1);
+                        questionsAdapter.notifyItemRemoved(questionItems.size());
+                        //add items one by one
+                        for (int i = 0; i < 15; i++) {
+                            questionItems.add(questionItems.get(questionItems.size()+1));
+                            questionsAdapter.notifyItemInserted(questionItems.size());
+                        }
+                        questionsAdapter.setLoaded();
+                        //or you can add all at once but do not forget to call mAdapter.notifyDataSetChanged();
+                    }
+                }, 2000);
+
+            }
+        });
+
+
     }
 
     @Override
@@ -138,7 +165,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void hitApi(String sort, String name, int page) {
 
         tag = name;
-        sort1 = sort;
+        sortname = sort;
         if (page == 1)
             rotateloading.start();
         stackExchangeApi = createService(StackExchange.class);
@@ -148,7 +175,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 rotateloading.stop();
                 recyclerView.setVisibility(View.VISIBLE);
                 questionItems.clear();
-                questionItems.addAll(questions.getItems());
+                for(int i=0;i<7;i++)
+                questionItems.add(questions.getItems().get(i));
                 questionsAdapter.notifyDataSetChanged();
             }
 
@@ -227,7 +255,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 //  rotateloading.start();
                 if (filterList != null && filterList.size() > 0) {
                     recyclerView.setVisibility(View.GONE);
-                    hitApi(sort1, filterList.get(position).getName(), 1);
+                    hitApi(sortname, filterList.get(position).getName(), 1);
                 }
 
 

@@ -1,6 +1,7 @@
 package com.example.creately.questions.Adapter;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -31,15 +31,53 @@ import butterknife.ButterKnife;
 public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.ViewHolder> {
 
 
-
     private Context context;
+    private OnMoreLoadListener onMoreLoadListener;
+    private int totalItemCount,lastVisiblePosition;
+    private int visibleThreshhold=2;
+    private boolean loading;
 
     private ArrayList<Items> questionItems;
+    private RecyclerView recyclerView;
 
 
-    public QuestionsAdapter(Context context, ArrayList<Items> questionItems) {
+    public QuestionsAdapter(Context context, ArrayList<Items> questionItems, RecyclerView recyclerView) {
         this.questionItems = questionItems;
         this.context = context;
+        if(recyclerView.getLayoutManager() instanceof LinearLayoutManager)
+        {
+          final  LinearLayoutManager lw= (LinearLayoutManager) recyclerView.getLayoutManager();
+
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    totalItemCount=lw.getItemCount();
+                    lastVisiblePosition=lw.findLastVisibleItemPosition();
+                    if(!loading && totalItemCount<=lastVisiblePosition+visibleThreshhold )
+                    {
+                        if(onMoreLoadListener!=null)
+                            onMoreLoadListener.onLoadMore();
+
+                        loading=true;
+                    }
+                }
+            });
+        }
+    }
+
+
+    public void setOnMoreLoadListener(OnMoreLoadListener onMoreLoadListener) {
+        this.onMoreLoadListener = onMoreLoadListener;
+    }
+
+    public void setLoaded() {
+        loading=false;
+    }
+
+
+    public interface OnMoreLoadListener {
+        void onLoadMore();
     }
 
 
@@ -62,7 +100,6 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             holder.tags.append(items.getTags().get(i) + " ");
         }
         holder.timeStamp.setText(CommonUtils.toRelativeTime(new DateTime(Long.parseLong(items.getLast_activity_date()) * 1000, DateTimeZone.getDefault())));
-
     }
 
 
@@ -94,8 +131,6 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             super(itemView);
             this.itemView = itemView;
             ButterKnife.bind(this, itemView);
-
-
         }
     }
 }
