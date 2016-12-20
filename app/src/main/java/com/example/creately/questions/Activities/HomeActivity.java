@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ import com.example.creately.questions.Interface.OnItemClickListener;
 import com.example.creately.questions.Model.Tag.Tags;
 import com.example.creately.questions.Model.UnansweredQues.Items;
 import com.example.creately.questions.Model.UnansweredQues.Questions;
+import com.example.creately.questions.Utils.EndlessRecyclerOnScrollListener;
 import com.victor.loading.rotate.RotateLoading;
 
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     FloatingActionButton floatingbutton;
     private QuestionsAdapter questionsAdapter;
-    private ArrayList<Items> questionItems;
+    private ArrayList<Items> questionItems=new ArrayList<Items>();
     private ArrayList<com.example.creately.questions.Model.Tag.Items> tagItems;
     MenuItem searchViewItem;
     private StackExchange stackExchangeApi;
@@ -75,6 +77,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private WindowManager windowManager;
     private String[] items = {"Activity", "Creation", "Votes", "Relevance"};
     private String tag;
+    private String sort1;
+    private LinearLayoutManager linearLayoutManger;
+    private EndlessRecyclerOnScrollListener endlessScrollListener;
 
     @Override
     public void onBackPressed() {
@@ -86,21 +91,36 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(HomeActivity.this);
-
         setToolbar();
-        setRecyclerView();
         floatingbutton.setOnClickListener(this);
+        setRecylerView(savedInstanceState);
 
-        if (savedInstanceState != null && savedInstanceState.getSerializable("ITEMS") != null) {
-            questionItems = new ArrayList<Items>();
-            questionItems = (ArrayList<Items>) savedInstanceState.getSerializable("ITEMS");
-            setAdapterForQuestions();
-        } else {
-            questionItems = new ArrayList<Items>();
-            hitApi(null, "android");
-        }
     }
 
+    private void setRecylerView(Bundle savedInstanceState) {
+        linearLayoutManger = new LinearLayoutManager(this);
+        linearLayoutManger.setOrientation(LinearLayoutManager.VERTICAL);
+        endlessScrollListener = new EndlessRecyclerOnScrollListener(linearLayoutManger) {
+            @Override
+            public void onLoadMore(int current_page) {
+                Log.d("endlessscroll",current_page+"");
+                hitApi(sort1, tag, current_page);
+            }
+        };
+        recyclerView.setLayoutManager(linearLayoutManger);
+       recyclerView.addOnScrollListener(endlessScrollListener);
+        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems);
+        recyclerView.setAdapter(questionsAdapter);
+
+
+        if (savedInstanceState != null && savedInstanceState.getSerializable("ITEMS") != null) {
+            questionItems.addAll((ArrayList<Items>) savedInstanceState.getSerializable("ITEMS"));
+           // recyclerView.setAdapter(questionsAdapter);
+            questionsAdapter.notifyDataSetChanged();
+        } else {
+            hitApi(null, "android", 1);
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -115,21 +135,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void hitApi(String sort, String name) {
-        if (questionsAdapter != null) {
-            questionItems = null;
-            questionsAdapter.notifyDataSetChanged();
-        }
+    private void hitApi(String sort, String name, int page) {
+
         tag = name;
-        rotateloading.start();
+        sort1 = sort;
+        if (page == 1)
+            rotateloading.start();
         stackExchangeApi = createService(StackExchange.class);
-        stackExchangeApi.getAndroidUnansweredQueastion(sort, "desc", name, SITE, new Callback<Questions>() {
+        stackExchangeApi.getAndroidUnansweredQueastion(sort, "desc", page, name, SITE, new Callback<Questions>() {
             @Override
             public void success(Questions questions, Response response) {
                 rotateloading.stop();
-                questionItems = questions.getItems();
-                setAdapterForQuestions();
-
+                recyclerView.setVisibility(View.VISIBLE);
+                questionItems.clear();
+                questionItems.addAll(questions.getItems());
+                questionsAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -137,18 +157,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 rotateloading.stop();
             }
         });
-    }
-
-    private void setAdapterForQuestions() {
-        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems);
-        recyclerView.setVisibility(View.VISIBLE);
-        recyclerView.setAdapter(questionsAdapter);
-    }
-
-
-    private void setRecyclerView() {
-        LinearLayoutManager linearLayoutManger = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManger);
     }
 
     @Override
@@ -216,10 +224,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void onItemClick(int position) {
 
                 toolbarSearchDialog.dismiss();
-              //  rotateloading.start();
+                //  rotateloading.start();
                 if (filterList != null && filterList.size() > 0) {
                     recyclerView.setVisibility(View.GONE);
-                    hitApi(null, filterList.get(position).getName());
+                    hitApi(sort1, filterList.get(position).getName(), 1);
                 }
 
 
@@ -316,11 +324,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ListView lw = ((AlertDialog) dialogInterface).getListView();
-                Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
-                String sortname = (String.valueOf(checkedItem));
+                if (lw.getCheckedItemPosition() != -1) {
+                    Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
+                    String sortname = (String.valueOf(checkedItem));
+                    recyclerView.setVisibility(View.GONE);
+                    hitApi(sortname, tag, 1);
+                }
                 dialogInterface.dismiss();
-                recyclerView.setVisibility(View.GONE);
-                hitApi(sortname, tag);
+
 
             }
         });
