@@ -1,10 +1,12 @@
 package com.example.creately.questions.Model.UnansweredQues;
 
+import java.io.Serializable;
+
 /**
  * Created by rahul on 08/12/16.
  */
 
-public class Owner
+public class Owner implements Serializable
 {
     private String display_name;
 

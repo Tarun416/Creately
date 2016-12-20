@@ -1,8 +1,11 @@
 package com.example.creately.questions.Activities;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +20,8 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.creately.R;
@@ -28,7 +33,9 @@ import com.example.creately.questions.Model.Tag.Tags;
 import com.example.creately.questions.Model.UnansweredQues.Items;
 import com.example.creately.questions.Model.UnansweredQues.Questions;
 import com.victor.loading.rotate.RotateLoading;
+
 import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit.Callback;
@@ -41,7 +48,7 @@ import static com.example.creately.questions.ApiGenerator.createService;
  * Created by rahul on 08/12/16.
  */
 
-public class HomeActivity extends AppCompatActivity  {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -51,6 +58,9 @@ public class HomeActivity extends AppCompatActivity  {
     Toolbar toolbar;
     @BindView(R.id.rotateloading)
     RotateLoading rotateloading;
+    @BindView(R.id.floatingbutton)
+
+    FloatingActionButton floatingbutton;
     private QuestionsAdapter questionsAdapter;
     private ArrayList<Items> questionItems;
     private ArrayList<com.example.creately.questions.Model.Tag.Items> tagItems;
@@ -60,9 +70,11 @@ public class HomeActivity extends AppCompatActivity  {
     private SearchAdapter searchAdapter;
     private Dialog toolbarSearchDialog;
     private RecyclerView listSearch;
-    private  ArrayList<com.example.creately.questions.Model.Tag.Items> filterList;
+    private ArrayList<com.example.creately.questions.Model.Tag.Items> filterList;
     private View view;
     private WindowManager windowManager;
+    private String[] items = {"Activity", "Creation", "Votes", "Relevance"};
+    private String tag;
 
     @Override
     public void onBackPressed() {
@@ -77,35 +89,41 @@ public class HomeActivity extends AppCompatActivity  {
 
         setToolbar();
         setRecyclerView();
-        if(savedInstanceState!=null && savedInstanceState.getSerializable("ITEMS")!=null) {
+        floatingbutton.setOnClickListener(this);
+
+        if (savedInstanceState != null && savedInstanceState.getSerializable("ITEMS") != null) {
             questionItems = new ArrayList<Items>();
-            questionItems= (ArrayList<Items>) savedInstanceState.getSerializable("ITEMS");
+            questionItems = (ArrayList<Items>) savedInstanceState.getSerializable("ITEMS");
             setAdapterForQuestions();
-        }
-       else {
+        } else {
             questionItems = new ArrayList<Items>();
-            hitApi("android");
+            hitApi(null, "android");
         }
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("ITEMS",questionItems);
+        outState.putSerializable("ITEMS", questionItems);
     }
 
     private void setToolbar() {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            toolbarTitle.setText("StackOverflow");
+            toolbarTitle.setText("QuesWiki");
         }
     }
 
-    private void hitApi(String name) {
-
+    private void hitApi(String sort, String name) {
+        if (questionsAdapter != null) {
+            questionItems = null;
+            questionsAdapter.notifyDataSetChanged();
+        }
+        tag = name;
         rotateloading.start();
         stackExchangeApi = createService(StackExchange.class);
-        stackExchangeApi.getAndroidUnansweredQueastion(name, SITE, new Callback<Questions>() {
+        stackExchangeApi.getAndroidUnansweredQueastion(sort, "desc", name, SITE, new Callback<Questions>() {
             @Override
             public void success(Questions questions, Response response) {
                 rotateloading.stop();
@@ -123,6 +141,7 @@ public class HomeActivity extends AppCompatActivity  {
 
     private void setAdapterForQuestions() {
         questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems);
+        recyclerView.setVisibility(View.VISIBLE);
         recyclerView.setAdapter(questionsAdapter);
     }
 
@@ -139,13 +158,11 @@ public class HomeActivity extends AppCompatActivity  {
     }
 
 
-    public void removeInflatedView()
-    {
-        if(view!=null) {
+    public void removeInflatedView() {
+        if (view != null && windowManager != null) {
             toolbarSearchDialog.dismiss();
             windowManager.removeView(view);
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
@@ -167,7 +184,7 @@ public class HomeActivity extends AppCompatActivity  {
 
     private void inflateSearchView() {
 
-        view =HomeActivity.this.getLayoutInflater().inflate(R.layout.view_toolbar_search, null);
+        view = HomeActivity.this.getLayoutInflater().inflate(R.layout.view_toolbar_search, null);
         ImageView imgCancel = (ImageView) view.findViewById(R.id.ic_close);
 
 
@@ -192,17 +209,17 @@ public class HomeActivity extends AppCompatActivity  {
                 toolbarSearchDialog.dismiss();
             }
         });
-        filterList=tagItems;
+        filterList = tagItems;
         tagItems = (tagItems != null && tagItems.size() > 0) ? tagItems : new ArrayList<com.example.creately.questions.Model.Tag.Items>();
         searchAdapter = new SearchAdapter(HomeActivity.this, tagItems, new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
 
                 toolbarSearchDialog.dismiss();
-                rotateloading.start();
-                if(filterList!=null && filterList.size()>0)
-                {
-                    hitApi(filterList.get(position).getName());
+              //  rotateloading.start();
+                if (filterList != null && filterList.size() > 0) {
+                    recyclerView.setVisibility(View.GONE);
+                    hitApi(null, filterList.get(position).getName());
                 }
 
 
@@ -210,7 +227,7 @@ public class HomeActivity extends AppCompatActivity  {
         });
         listSearch.setVisibility(View.VISIBLE);
         listSearch.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         listSearch.setLayoutManager(linearLayoutManager);
         listSearch.setAdapter(searchAdapter);
 
@@ -234,7 +251,7 @@ public class HomeActivity extends AppCompatActivity  {
                         if (tagItems.get(i).getName().toLowerCase().startsWith(s.toString().trim().toLowerCase())) {
                             filterList.add(tagItems.get(i));
                             listSearch.setVisibility(View.VISIBLE);
-                            searchAdapter.updateList(filterList,true);
+                            searchAdapter.updateList(filterList, true);
                             isNodata = true;
                         }
                     }
@@ -242,9 +259,7 @@ public class HomeActivity extends AppCompatActivity  {
                         listSearch.setVisibility(View.GONE);
                         txtEmpty.setVisibility(View.VISIBLE);
                         txtEmpty.setText("No data found");
-                    }
-                    else
-                    {
+                    } else {
                         txtEmpty.setVisibility(View.GONE);
                     }
                 } else {
@@ -262,13 +277,14 @@ public class HomeActivity extends AppCompatActivity  {
     }
 
     private void getTags() {
-        if(stackExchangeApi==null)
-            stackExchangeApi=createService(StackExchange.class);
+        if (stackExchangeApi == null)
+            stackExchangeApi = createService(StackExchange.class);
         stackExchangeApi.getTags(SITE, new Callback<Tags>() {
             @Override
             public void success(Tags tagModel, Response response) {
                 tagItems = tagModel.getItems();
             }
+
             @Override
             public void failure(RetrofitError error) {
 
@@ -276,4 +292,48 @@ public class HomeActivity extends AppCompatActivity  {
         });
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.floatingbutton:
+                invokeDialog();
+        }
+
+    }
+
+    private void invokeDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        builder.setTitle("Select the sorting");
+
+
+        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ListView lw = ((AlertDialog) dialogInterface).getListView();
+                Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
+                String sortname = (String.valueOf(checkedItem));
+                dialogInterface.dismiss();
+                recyclerView.setVisibility(View.GONE);
+                hitApi(sortname, tag);
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+
+            }
+        });
+
+        AlertDialog alert1 = builder.create();
+        alert1.show();
+
+    }
 }

@@ -1,27 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
+
+   <android.support.design.widget.AppBarLayout
+       android:layout_width="match_parent"
+       android:id="@+id/toolbarlayout"
+       android:layout_height="wrap_content">
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar_layout" />
+   </android.support.design.widget.AppBarLayout>
 
     <com.victor.loading.rotate.RotateLoading
         android:id="@+id/rotateloading"
         app:loading_color="@android:color/holo_red_dark"
         app:loading_width="5dp"
+        android:layout_gravity="center"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerInParent="true"
         />
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="?android:attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 
-</RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingbutton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="@dimen/margin16"
+        android:src="@drawable/ic_add_white"
+        android:background="@color/transparent"
+        android:layout_gravity="bottom|end">
+
+    </android.support.design.widget.FloatingActionButton>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

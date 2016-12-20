@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -27,6 +29,7 @@ import butterknife.ButterKnife;
  */
 
 public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.ViewHolder> {
+
 
 
     private Context context;
@@ -56,7 +59,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         holder.rating.setText("Rating : " + items.getScore());
         Glide.with(context).load(items.getOwner().getProfile_image()).into(holder.profiileImage);
         for (int i = 0; i < items.getTags().size(); i++) {
-            holder.tags.append(items.getTags().get(i)+" ");
+            holder.tags.append(items.getTags().get(i) + " ");
         }
         holder.timeStamp.setText(CommonUtils.toRelativeTime(new DateTime(Long.parseLong(items.getLast_activity_date()) * 1000, DateTimeZone.getDefault())));
 
@@ -72,6 +75,9 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public View itemView;
+
+        @BindView(R.id.shareButton)
+        ImageButton shareButton;
         @BindView(R.id.profiileImage)
         ImageView profiileImage;
         @BindView(R.id.questionDescription)
@@ -83,6 +89,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
         @BindView(R.id.timeStamp)
         TextView timeStamp;
+
         public ViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
