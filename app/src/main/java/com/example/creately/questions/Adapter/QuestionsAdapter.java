@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.creately.R;
+import com.example.creately.questions.Interface.OnItemClickListener;
 import com.example.creately.questions.Model.UnansweredQues.Items;
 import com.example.creately.questions.Utils.CommonUtils;
 
@@ -39,11 +40,14 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
     private ArrayList<Items> questionItems;
     private RecyclerView recyclerView;
+    private OnItemClickListener onItemClickListener;
 
 
-    public QuestionsAdapter(Context context, ArrayList<Items> questionItems, RecyclerView recyclerView) {
+
+    public QuestionsAdapter(Context context, ArrayList<Items> questionItems, RecyclerView recyclerView, OnItemClickListener onItemClickListener) {
         this.questionItems = questionItems;
         this.context = context;
+        this.onItemClickListener=onItemClickListener;
        /* if(recyclerView.getLayoutManager() instanceof LinearLayoutManager)
         {
           final  LinearLayoutManager lw= (LinearLayoutManager) recyclerView.getLayoutManager();
@@ -90,7 +94,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         Items items = questionItems.get(position);
         Log.d("itemmm", items.getTitle());
         holder.questionDescription.setText(items.getTitle());
@@ -100,6 +104,13 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             holder.tags.append(items.getTags().get(i) + " ");
         }
         holder.timeStamp.setText(CommonUtils.toRelativeTime(new DateTime(Long.parseLong(items.getLast_activity_date()) * 1000, DateTimeZone.getDefault())));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemClickListener.onItemClick(position);
+            }
+        });
     }
 
 
@@ -131,6 +142,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             super(itemView);
             this.itemView = itemView;
             ButterKnife.bind(this, itemView);
+
         }
     }
 }

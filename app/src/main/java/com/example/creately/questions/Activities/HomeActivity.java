@@ -1,7 +1,10 @@
 package com.example.creately.questions.Activities;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -24,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.creately.R;
 import com.example.creately.questions.Adapter.QuestionsAdapter;
@@ -118,7 +122,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         };
         recyclerView.setLayoutManager(linearLayoutManger);
         recyclerView.addOnScrollListener(endlessScrollListener);
-        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems,recyclerView);
+        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems,recyclerView, new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                   openQuesInBrowser(position);
+            }
+        });
         recyclerView.setAdapter(questionsAdapter);
 
        /* questionsAdapter.setOnMoreLoadListener(new QuestionsAdapter.OnMoreLoadListener() {
@@ -147,6 +156,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         });*/
 
+
+    }
+
+    private void openQuesInBrowser(int position) {
+        Log.d("position",position+"");
+        try {
+            Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(questionItems.get(position).getLink()));
+            startActivity(myIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "No application can handle this request."
+                    + " Please install a webbrowser",  Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
 
     }
 
@@ -260,6 +282,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 
             }
+
         });
         listSearch.setVisibility(View.VISIBLE);
         listSearch.setHasFixedSize(true);
