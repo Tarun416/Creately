@@ -7,4 +7,5 @@ package com.example.creately.questions.Interface;
 public interface OnItemClickListener {
     void onItemClick(int position);
 
+    void share(int position);
 }

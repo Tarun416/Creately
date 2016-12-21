@@ -1,7 +1,7 @@
 package com.example.creately.questions.Adapter;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,10 +32,11 @@ import butterknife.ButterKnife;
 public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.ViewHolder> {
 
 
+
     private Context context;
     private OnMoreLoadListener onMoreLoadListener;
-    private int totalItemCount,lastVisiblePosition;
-    private int visibleThreshhold=2;
+    private int totalItemCount, lastVisiblePosition;
+    private int visibleThreshhold = 2;
     private boolean loading;
 
     private ArrayList<Items> questionItems;
@@ -43,11 +44,10 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
     private OnItemClickListener onItemClickListener;
 
 
-
     public QuestionsAdapter(Context context, ArrayList<Items> questionItems, RecyclerView recyclerView, OnItemClickListener onItemClickListener) {
         this.questionItems = questionItems;
         this.context = context;
-        this.onItemClickListener=onItemClickListener;
+        this.onItemClickListener = onItemClickListener;
        /* if(recyclerView.getLayoutManager() instanceof LinearLayoutManager)
         {
           final  LinearLayoutManager lw= (LinearLayoutManager) recyclerView.getLayoutManager();
@@ -76,7 +76,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
     }
 
     public void setLoaded() {
-        loading=false;
+        loading = false;
     }
 
 
@@ -105,12 +105,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         }
         holder.timeStamp.setText(CommonUtils.toRelativeTime(new DateTime(Long.parseLong(items.getLast_activity_date()) * 1000, DateTimeZone.getDefault())));
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onItemClickListener.onItemClick(position);
-            }
-        });
+
     }
 
 
@@ -120,9 +115,12 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         return questionItems.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public View itemView;
+
+        @BindView(R.id.cardContainer)
+        CardView cardContainer;
 
         @BindView(R.id.shareButton)
         ImageButton shareButton;
@@ -142,7 +140,26 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             super(itemView);
             this.itemView = itemView;
             ButterKnife.bind(this, itemView);
+            cardContainer.setOnClickListener(this);
+            shareButton.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+
+            if (position != RecyclerView.NO_POSITION) {
+
+                switch (view.getId()) {
+                    case R.id.cardContainer:
+                        onItemClickListener.onItemClick(position);
+                        break;
+                    case R.id.shareButton:
+                        onItemClickListener.share(position);
+                        break;
+                }
+
+            }
         }
     }
 }

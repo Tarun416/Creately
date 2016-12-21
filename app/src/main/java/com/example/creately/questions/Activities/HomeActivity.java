@@ -127,6 +127,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void onItemClick(int position) {
                    openQuesInBrowser(position);
             }
+
+            @Override
+            public void share(int position) {
+                try {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    String sAux = questionItems.get(position).getLink();
+                    i.putExtra(Intent.EXTRA_TEXT, sAux);
+                    startActivity(Intent.createChooser(i, "choose one"));
+                } catch(Exception e) {
+                    //e.toString();
+                }
+            }
         });
         recyclerView.setAdapter(questionsAdapter);
 
@@ -280,6 +293,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     hitApi(sortname, filterList.get(position).getName(), 1);
                 }
 
+
+            }
+
+            @Override
+            public void share(int position) {
 
             }
 
