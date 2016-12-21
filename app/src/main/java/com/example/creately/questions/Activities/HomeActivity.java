@@ -117,10 +117,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         recyclerView.setLayoutManager(linearLayoutManger);
+        recyclerView.addOnScrollListener(endlessScrollListener);
         questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems,recyclerView);
         recyclerView.setAdapter(questionsAdapter);
 
-        questionsAdapter.setOnMoreLoadListener(new QuestionsAdapter.OnMoreLoadListener() {
+       /* questionsAdapter.setOnMoreLoadListener(new QuestionsAdapter.OnMoreLoadListener() {
             @Override
             public void onLoadMore() {
                 //add progress item
@@ -144,7 +145,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }, 2000);
 
             }
-        });
+        });*/
 
 
     }
@@ -162,7 +163,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void hitApi(String sort, String name, int page) {
+    private void hitApi(String sort, String name, final int page) {
 
         tag = name;
         sortname = sort;
@@ -174,9 +175,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void success(Questions questions, Response response) {
                 rotateloading.stop();
                 recyclerView.setVisibility(View.VISIBLE);
+                if(page==1)
                 questionItems.clear();
-                for(int i=0;i<7;i++)
-                questionItems.add(questions.getItems().get(i));
+                questionItems.addAll(questions.getItems());
                 questionsAdapter.notifyDataSetChanged();
             }
 
@@ -223,12 +224,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         view = HomeActivity.this.getLayoutInflater().inflate(R.layout.view_toolbar_search, null);
         ImageView imgCancel = (ImageView) view.findViewById(R.id.ic_close);
 
-
         final EditText edtToolSearch = (EditText) view.findViewById(R.id.edt_tool_search);
 
         listSearch = (RecyclerView) view.findViewById(R.id.list_search);
         final TextView txtEmpty = (TextView) view.findViewById(R.id.txt_empty);
-
 
         toolbarSearchDialog = new Dialog(HomeActivity.this, R.style.MaterialSearch);
         toolbarSearchDialog.setContentView(view);
@@ -255,6 +254,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 //  rotateloading.start();
                 if (filterList != null && filterList.size() > 0) {
                     recyclerView.setVisibility(View.GONE);
+                    endlessScrollListener.reset(0,true);
                     hitApi(sortname, filterList.get(position).getName(), 1);
                 }
 
@@ -356,6 +356,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
                     String sortname = (String.valueOf(checkedItem));
                     recyclerView.setVisibility(View.GONE);
+                    endlessScrollListener.reset(0,true);
                     hitApi(sortname, tag, 1);
                 }
                 dialogInterface.dismiss();

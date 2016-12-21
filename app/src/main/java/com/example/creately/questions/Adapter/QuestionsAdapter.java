@@ -44,7 +44,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
     public QuestionsAdapter(Context context, ArrayList<Items> questionItems, RecyclerView recyclerView) {
         this.questionItems = questionItems;
         this.context = context;
-        if(recyclerView.getLayoutManager() instanceof LinearLayoutManager)
+       /* if(recyclerView.getLayoutManager() instanceof LinearLayoutManager)
         {
           final  LinearLayoutManager lw= (LinearLayoutManager) recyclerView.getLayoutManager();
 
@@ -63,7 +63,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
                     }
                 }
             });
-        }
+        }*/
     }
 
 
