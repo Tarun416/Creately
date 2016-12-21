@@ -1,54 +1,31 @@
 package com.example.creately.questions.Activities;
 
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.creately.R;
 import com.example.creately.questions.Adapter.QuestionsAdapter;
 import com.example.creately.questions.Adapter.SearchAdapter;
 import com.example.creately.questions.ApiInterface.StackExchange;
-import com.example.creately.questions.Interface.OnItemClickListener;
-import com.example.creately.questions.Model.Tag.Tags;
+import com.example.creately.questions.Fragment.HomeFragment;
 import com.example.creately.questions.Model.UnansweredQues.Items;
-import com.example.creately.questions.Model.UnansweredQues.Questions;
 import com.example.creately.questions.Utils.EndlessRecyclerOnScrollListener;
-import com.victor.loading.rotate.RotateLoading;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-import static com.example.creately.questions.ApiGenerator.createService;
 
 /**
  * Created by rahul on 08/12/16.
@@ -56,19 +33,14 @@ import static com.example.creately.questions.ApiGenerator.createService;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.rotateloading)
-    RotateLoading rotateloading;
-    @BindView(R.id.floatingbutton)
+    @BindView(R.id.toolbar_title)
+    TextView toolbarTitle;
 
-    FloatingActionButton floatingbutton;
     private QuestionsAdapter questionsAdapter;
-    private ArrayList<Items> questionItems=new ArrayList<Items>();
+    private ArrayList<Items> questionItems = new ArrayList<Items>();
     private ArrayList<com.example.creately.questions.Model.Tag.Items> tagItems;
     MenuItem searchViewItem;
     private StackExchange stackExchangeApi;
@@ -86,10 +58,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private EndlessRecyclerOnScrollListener endlessScrollListener;
     private Handler handler;
 
-    @Override
-    public void onBackPressed() {
-        removeInflatedView();
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,35 +65,47 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
         ButterKnife.bind(HomeActivity.this);
         setToolbar();
-        floatingbutton.setOnClickListener(this);
-        handler=new Handler();
-        setRecylerView(savedInstanceState);
+        attachFragment();
+    }
 
-        if (savedInstanceState != null && savedInstanceState.getSerializable("ITEMS") != null) {
-            questionItems.addAll((ArrayList<Items>) savedInstanceState.getSerializable("ITEMS"));
-            questionsAdapter.notifyDataSetChanged();
-        } else {
-            hitApi(null, "android", 1);
+    private void setToolbar() {
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbarTitle.setText("QuesWiki");
         }
+    }
+
+
+    private void attachFragment() {
+
+        HomeFragment homeFragment = HomeFragment.getInstance();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.container, homeFragment, "homefragment").commit();
 
     }
 
-    private void setRecylerView(Bundle savedInstanceState) {
+    @Override
+    public void onClick(View view) {
+
+    }
+
+   /* private void setRecylerView(Bundle savedInstanceState) {
         linearLayoutManger = new LinearLayoutManager(this);
         linearLayoutManger.setOrientation(LinearLayoutManager.VERTICAL);
         endlessScrollListener = new EndlessRecyclerOnScrollListener(linearLayoutManger) {
             @Override
             public void onLoadMore(int current_page) {
-                Log.d("endlessscroll",current_page+"");
+                Log.d("endlessscroll", current_page + "");
                 hitApi(sortname, tag, current_page);
             }
         };
         recyclerView.setLayoutManager(linearLayoutManger);
         recyclerView.addOnScrollListener(endlessScrollListener);
-        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems,recyclerView, new OnItemClickListener() {
+        questionsAdapter = new QuestionsAdapter(HomeActivity.this, questionItems, recyclerView, new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                   openQuesInBrowser(position);
+                openQuesInBrowser(position);
             }
 
             @Override
@@ -136,14 +116,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     String sAux = questionItems.get(position).getLink();
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "choose one"));
-                } catch(Exception e) {
+                } catch (Exception e) {
                     //e.toString();
                 }
             }
         });
         recyclerView.setAdapter(questionsAdapter);
 
-       /* questionsAdapter.setOnMoreLoadListener(new QuestionsAdapter.OnMoreLoadListener() {
+       *//* questionsAdapter.setOnMoreLoadListener(new QuestionsAdapter.OnMoreLoadListener() {
             @Override
             public void onLoadMore() {
                 //add progress item
@@ -167,19 +147,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }, 2000);
 
             }
-        });*/
+        });*//*
 
 
     }
 
     private void openQuesInBrowser(int position) {
-        Log.d("position",position+"");
+        Log.d("position", position + "");
         try {
             Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(questionItems.get(position).getLink()));
             startActivity(myIntent);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, "No application can handle this request."
-                    + " Please install a webbrowser",  Toast.LENGTH_LONG).show();
+                    + " Please install a webbrowser", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
@@ -210,8 +190,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void success(Questions questions, Response response) {
                 rotateloading.stop();
                 recyclerView.setVisibility(View.VISIBLE);
-                if(page==1)
-                questionItems.clear();
+                if (page == 1)
+                    questionItems.clear();
                 questionItems.addAll(questions.getItems());
                 questionsAdapter.notifyDataSetChanged();
             }
@@ -289,7 +269,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 //  rotateloading.start();
                 if (filterList != null && filterList.size() > 0) {
                     recyclerView.setVisibility(View.GONE);
-                    endlessScrollListener.reset(0,true);
+                    endlessScrollListener.reset(0, true);
                     hitApi(sortname, filterList.get(position).getName(), 1);
                 }
 
@@ -397,7 +377,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
                     String sortname = (String.valueOf(checkedItem));
                     recyclerView.setVisibility(View.GONE);
-                    endlessScrollListener.reset(0,true);
+                    endlessScrollListener.reset(0, true);
                     hitApi(sortname, tag, 1);
                 }
                 dialogInterface.dismiss();
@@ -416,5 +396,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog alert1 = builder.create();
         alert1.show();
 
-    }
+    }*/
 }
