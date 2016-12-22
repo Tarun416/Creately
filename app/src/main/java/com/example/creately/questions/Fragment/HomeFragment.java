@@ -32,7 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.creately.R;
-import com.example.creately.questions.Activities.HomeActivity;
 import com.example.creately.questions.Adapter.QuestionsAdapter;
 import com.example.creately.questions.Adapter.SearchAdapter;
 import com.example.creately.questions.ApiInterface.StackExchange;
@@ -66,7 +65,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @BindView(R.id.floatingbutton)
     FloatingActionButton floatingbutton;
 
-
     private QuestionsAdapter questionsAdapter;
     private static HomeFragment instance;
     private ArrayList<Items> questionItems = new ArrayList<Items>();
@@ -92,12 +90,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.unanswered_ques, container, false);
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
         floatingbutton.setOnClickListener(this);
         handler = new Handler();
-        setRecylerView(savedInstanceState);
-
+        setRecylerView();
         if (savedInstanceState != null && savedInstanceState.getSerializable("ITEMS") != null) {
             questionItems.addAll((ArrayList<Items>) savedInstanceState.getSerializable("ITEMS"));
             questionsAdapter.notifyDataSetChanged();
@@ -107,16 +104,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    public static HomeFragment getInstance()
-    {
-        if(instance==null)
+    public static HomeFragment getInstance() {
+        if (instance == null)
             return new HomeFragment();
         else
-            return  instance;
+            return instance;
     }
-
-
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -127,8 +120,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.home_menu, menu);
-        super.onCreateOptionsMenu(menu,inflater);
-        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -144,7 +137,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         getTags();
         inflateSearchView();
     }
-
 
 
     private void getTags() {
@@ -202,15 +194,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     endlessScrollListener.reset(0, true);
                     hitApi(sortname, filterList.get(position).getName(), 1);
                 }
-
-
             }
 
             @Override
             public void share(int position) {
 
             }
-
         });
         listSearch.setVisibility(View.VISIBLE);
         listSearch.setHasFixedSize(true);
@@ -264,11 +253,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
-
-
-
-    private void setRecylerView(Bundle savedInstanceState) {
+    private void setRecylerView() {
         linearLayoutManger = new LinearLayoutManager(getActivity());
         linearLayoutManger.setOrientation(LinearLayoutManager.VERTICAL);
         endlessScrollListener = new EndlessRecyclerOnScrollListener(linearLayoutManger) {
@@ -300,33 +285,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
         });
         recyclerView.setAdapter(questionsAdapter);
-
-       /* questionsAdapter.setOnMoreLoadListener(new QuestionsAdapter.OnMoreLoadListener() {
-            @Override
-            public void onLoadMore() {
-                //add progress item
-                questionItems.add(null);
-                questionsAdapter.notifyItemInserted(questionItems.size() - 1);
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //remove progress item
-                        questionItems.remove(questionItems.size() - 1);
-                        questionsAdapter.notifyItemRemoved(questionItems.size());
-                        //add items one by one
-                        for (int i = 0; i < 15; i++) {
-                            questionItems.add(questionItems.get(questionItems.size()+1));
-                            questionsAdapter.notifyItemInserted(questionItems.size());
-                        }
-                        questionsAdapter.setLoaded();
-                        //or you can add all at once but do not forget to call mAdapter.notifyDataSetChanged();
-                    }
-                }, 2000);
-
-            }
-        });*/
-
     }
 
 
@@ -340,25 +298,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     + " Please install a webbrowser", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-
     }
 
 
-
     private void hitApi(String sort, String name, final int page) {
-
         tag = name;
         sortname = sort;
-        if (page == 1)
+        if (page == 1 ) {
             rotateloading.start();
+        }
         stackExchangeApi = createService(StackExchange.class);
         stackExchangeApi.getAndroidUnansweredQueastion(sort, "desc", page, name, SITE, new Callback<Questions>() {
             @Override
             public void success(Questions questions, Response response) {
                 rotateloading.stop();
                 recyclerView.setVisibility(View.VISIBLE);
-                if (page == 1)
+                if (page == 1) {
+                    recyclerView.scrollToPosition(0);
                     questionItems.clear();
+                }
                 questionItems.addAll(questions.getItems());
                 questionsAdapter.notifyDataSetChanged();
             }
@@ -369,7 +327,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
         });
     }
-
 
 
     @Override
@@ -403,8 +360,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     hitApi(sortname, tag, 1);
                 }
                 dialogInterface.dismiss();
-
-
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -419,8 +374,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         alert1.show();
 
     }
-
-
 
 
 }

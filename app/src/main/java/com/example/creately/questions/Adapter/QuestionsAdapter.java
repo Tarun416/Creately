@@ -34,13 +34,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
 
     private Context context;
-    private OnMoreLoadListener onMoreLoadListener;
-    private int totalItemCount, lastVisiblePosition;
-    private int visibleThreshhold = 2;
-    private boolean loading;
-
     private ArrayList<Items> questionItems;
-    private RecyclerView recyclerView;
     private OnItemClickListener onItemClickListener;
 
 
@@ -48,40 +42,6 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         this.questionItems = questionItems;
         this.context = context;
         this.onItemClickListener = onItemClickListener;
-       /* if(recyclerView.getLayoutManager() instanceof LinearLayoutManager)
-        {
-          final  LinearLayoutManager lw= (LinearLayoutManager) recyclerView.getLayoutManager();
-
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    totalItemCount=lw.getItemCount();
-                    lastVisiblePosition=lw.findLastVisibleItemPosition();
-                    if(!loading && totalItemCount<=lastVisiblePosition+visibleThreshhold )
-                    {
-                        if(onMoreLoadListener!=null)
-                            onMoreLoadListener.onLoadMore();
-
-                        loading=true;
-                    }
-                }
-            });
-        }*/
-    }
-
-
-    public void setOnMoreLoadListener(OnMoreLoadListener onMoreLoadListener) {
-        this.onMoreLoadListener = onMoreLoadListener;
-    }
-
-    public void setLoaded() {
-        loading = false;
-    }
-
-
-    public interface OnMoreLoadListener {
-        void onLoadMore();
     }
 
 
@@ -92,9 +52,8 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         return new ViewHolder(view);
     }
 
-
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         Items items = questionItems.get(position);
         Log.d("itemmm", items.getTitle());
         holder.questionDescription.setText(items.getTitle());
@@ -104,10 +63,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             holder.tags.append(items.getTags().get(i) + " ");
         }
         holder.timeStamp.setText(CommonUtils.toRelativeTime(new DateTime(Long.parseLong(items.getLast_activity_date()) * 1000, DateTimeZone.getDefault())));
-
-
     }
-
 
     @Override
     public int getItemCount() {
@@ -121,7 +77,6 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
         @BindView(R.id.cardContainer)
         CardView cardContainer;
-
         @BindView(R.id.shareButton)
         ImageButton shareButton;
         @BindView(R.id.profiileImage)
@@ -132,7 +87,6 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         TextView tags;
         @BindView(R.id.rating)
         TextView rating;
-
         @BindView(R.id.timeStamp)
         TextView timeStamp;
 
