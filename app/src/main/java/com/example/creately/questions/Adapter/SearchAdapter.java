@@ -22,7 +22,6 @@ import butterknife.ButterKnife;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
-
     private Context context;
     private ArrayList<Items> tagItems;
     private OnItemClickListener onItemClickListener;
@@ -44,7 +43,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         holder.bind(tagItems.get(position),onItemClickListener,position);
     }
 

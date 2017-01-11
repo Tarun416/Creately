@@ -20,5 +20,4 @@ public interface StackExchange {
     @GET("/tags")
     void getTags( @Query("site") String site, Callback<Tags> questionsCallback);
 
-
 }

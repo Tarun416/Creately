@@ -264,10 +264,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
-
-
-
     private void setRecylerView(Bundle savedInstanceState) {
         linearLayoutManger = new LinearLayoutManager(getActivity());
         linearLayoutManger.setOrientation(LinearLayoutManager.VERTICAL);
@@ -300,35 +296,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
         });
         recyclerView.setAdapter(questionsAdapter);
-
-       /* questionsAdapter.setOnMoreLoadListener(new QuestionsAdapter.OnMoreLoadListener() {
-            @Override
-            public void onLoadMore() {
-                //add progress item
-                questionItems.add(null);
-                questionsAdapter.notifyItemInserted(questionItems.size() - 1);
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //remove progress item
-                        questionItems.remove(questionItems.size() - 1);
-                        questionsAdapter.notifyItemRemoved(questionItems.size());
-                        //add items one by one
-                        for (int i = 0; i < 15; i++) {
-                            questionItems.add(questionItems.get(questionItems.size()+1));
-                            questionsAdapter.notifyItemInserted(questionItems.size());
-                        }
-                        questionsAdapter.setLoaded();
-                        //or you can add all at once but do not forget to call mAdapter.notifyDataSetChanged();
-                    }
-                }, 2000);
-
-            }
-        });*/
-
     }
-
 
     private void openQuesInBrowser(int position) {
         Log.d("position", position + "");

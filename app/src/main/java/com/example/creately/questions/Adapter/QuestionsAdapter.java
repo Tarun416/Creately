@@ -32,15 +32,8 @@ import butterknife.ButterKnife;
 public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.ViewHolder> {
 
 
-
     private Context context;
-    private OnMoreLoadListener onMoreLoadListener;
-    private int totalItemCount, lastVisiblePosition;
-    private int visibleThreshhold = 2;
-    private boolean loading;
-
     private ArrayList<Items> questionItems;
-    private RecyclerView recyclerView;
     private OnItemClickListener onItemClickListener;
 
 
@@ -48,40 +41,6 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         this.questionItems = questionItems;
         this.context = context;
         this.onItemClickListener = onItemClickListener;
-       /* if(recyclerView.getLayoutManager() instanceof LinearLayoutManager)
-        {
-          final  LinearLayoutManager lw= (LinearLayoutManager) recyclerView.getLayoutManager();
-
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    totalItemCount=lw.getItemCount();
-                    lastVisiblePosition=lw.findLastVisibleItemPosition();
-                    if(!loading && totalItemCount<=lastVisiblePosition+visibleThreshhold )
-                    {
-                        if(onMoreLoadListener!=null)
-                            onMoreLoadListener.onLoadMore();
-
-                        loading=true;
-                    }
-                }
-            });
-        }*/
-    }
-
-
-    public void setOnMoreLoadListener(OnMoreLoadListener onMoreLoadListener) {
-        this.onMoreLoadListener = onMoreLoadListener;
-    }
-
-    public void setLoaded() {
-        loading = false;
-    }
-
-
-    public interface OnMoreLoadListener {
-        void onLoadMore();
     }
 
 

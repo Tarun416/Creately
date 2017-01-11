@@ -15,8 +15,6 @@ public class ApiGenerator {
     public static final String BASE_URL =  "https://api.stackexchange.com/2.2/";
     public static final String api_key= "bEwPjSnm88FRqszCjGTPBg((";
 
-
-
     public  static <S> S createService(Class<S> serviceClass)
     {
 
