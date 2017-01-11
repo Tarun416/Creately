@@ -39,6 +39,13 @@ public class HomeActivity extends AppCompatActivity  {
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
 
+    private HomeFragment homeFragment;
+
+    @Override
+    public void onBackPressed() {
+      this.finish();
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +64,8 @@ public class HomeActivity extends AppCompatActivity  {
 
     private void attachFragment() {
 
-        HomeFragment homeFragment = HomeFragment.getInstance();
+
+        homeFragment = HomeFragment.getInstance();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.container, homeFragment, "homefragment").commit();

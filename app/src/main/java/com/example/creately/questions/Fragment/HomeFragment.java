@@ -92,7 +92,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.unanswered_ques, container, false);
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
         floatingbutton.setOnClickListener(this);
         handler = new Handler();
@@ -107,16 +107,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    public static HomeFragment getInstance()
-    {
-        if(instance==null)
+    public static HomeFragment getInstance() {
+        if (instance == null)
             return new HomeFragment();
         else
-            return  instance;
+            return instance;
     }
-
-
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -127,8 +123,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.home_menu, menu);
-        super.onCreateOptionsMenu(menu,inflater);
-        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -144,8 +140,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         getTags();
         inflateSearchView();
     }
-
-
 
     private void getTags() {
         if (stackExchangeApi == null)
@@ -174,12 +168,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         listSearch = (RecyclerView) view.findViewById(R.id.list_search);
         final TextView txtEmpty = (TextView) view.findViewById(R.id.txt_empty);
 
-        toolbarSearchDialog = new Dialog(getActivity(), R.style.MaterialSearch);
+        toolbarSearchDialog = new Dialog(getActivity(), R.style.MaterialSearch){
+
+            @Override
+            public void onBackPressed() {
+
+                    dismiss();
+
+            }
+        };
         toolbarSearchDialog.setContentView(view);
         toolbarSearchDialog.setCancelable(false);
         toolbarSearchDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         toolbarSearchDialog.getWindow().setGravity(Gravity.BOTTOM);
         toolbarSearchDialog.show();
+
+
         toolbarSearchDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 
@@ -189,6 +193,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 toolbarSearchDialog.dismiss();
             }
         });
+
+
         filterList = tagItems;
         tagItems = (tagItems != null && tagItems.size() > 0) ? tagItems : new ArrayList<com.example.creately.questions.Model.Tag.Items>();
         searchAdapter = new SearchAdapter(getActivity(), tagItems, new OnItemClickListener() {
@@ -202,8 +208,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     endlessScrollListener.reset(0, true);
                     hitApi(sortname, filterList.get(position).getName(), 1);
                 }
-
-
             }
 
             @Override
@@ -312,7 +316,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
     private void hitApi(String sort, String name, final int page) {
 
         tag = name;
@@ -337,7 +340,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
         });
     }
-
 
 
     @Override
@@ -387,8 +389,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         alert1.show();
 
     }
-
-
 
 
 }
