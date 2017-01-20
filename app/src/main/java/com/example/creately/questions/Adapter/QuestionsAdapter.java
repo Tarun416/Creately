@@ -92,6 +92,11 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         @BindView(R.id.rating)
         TextView rating;
 
+
+        @BindView(R.id.likebutton)
+                public
+        ImageButton likeButton;
+
         @BindView(R.id.timeStamp)
         TextView timeStamp;
 
@@ -115,6 +120,9 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
                         break;
                     case R.id.shareButton:
                         onItemClickListener.share(position);
+                        break;
+                    case R.id.likebutton:
+                        onItemClickListener.likeButtonClick(position, likeButton);
                         break;
                 }
 

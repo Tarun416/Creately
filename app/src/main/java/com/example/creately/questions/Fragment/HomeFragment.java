@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.GpsSatellite;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -65,6 +67,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     RecyclerView recyclerView;
     @BindView(R.id.floatingbutton)
     FloatingActionButton floatingbutton;
+    @BindView(R.id.nodatatext)
+    TextView nodatatext;
 
 
     private QuestionsAdapter questionsAdapter;
@@ -215,6 +219,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             }
 
+            @Override
+            public void likeButtonClick(int position, ImageButton likebutton) {
+
+            }
+
         });
         listSearch.setVisibility(View.VISIBLE);
         listSearch.setHasFixedSize(true);
@@ -298,6 +307,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     //e.toString();
                 }
             }
+
+            @Override
+            public void likeButtonClick(int position, ImageButton likebutton) {
+
+
+            }
         });
         recyclerView.setAdapter(questionsAdapter);
     }
@@ -326,6 +341,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         stackExchangeApi.getAndroidUnansweredQueastion(sort, "desc", page, name, SITE, new Callback<Questions>() {
             @Override
             public void success(Questions questions, Response response) {
+                nodatatext.setVisibility(View.GONE);
                 rotateloading.stop();
                 recyclerView.setVisibility(View.VISIBLE);
                 if (page == 1)
@@ -336,6 +352,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void failure(RetrofitError error) {
+                nodatatext.setVisibility(View.VISIBLE);
                 rotateloading.stop();
             }
         });
@@ -364,6 +381,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                nodatatext.setVisibility(View.GONE);
                 ListView lw = ((AlertDialog) dialogInterface).getListView();
                 if (lw.getCheckedItemPosition() != -1) {
                     Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());

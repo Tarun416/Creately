@@ -2,5 +2,9 @@
 <resources>
     <dimen name="margin16">16dp</dimen>
     <dimen name="margin8">8dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="profile_width">75dp</dimen>
+    <dimen name="profile_height">75dp</dimen>
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
 
 </resources>
