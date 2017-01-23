@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/view_container"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
+    android:layout_height="190dp"
     android:gravity="bottom"
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -12,20 +12,22 @@
         android:id="@+id/img_header_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/app_icon" />
+        android:scaleType="fitXY"
+        android:src="@drawable/nav" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:orientation="vertical"
+        android:visibility="gone"
         android:padding="@dimen/activity_horizontal_margin">
 
         <ImageView
             android:id="@+id/img_profile"
             android:layout_width="@dimen/profile_width"
             android:layout_height="@dimen/profile_height"
+            android:visibility="gone"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:src="@mipmap/app_icon" />
 
@@ -33,6 +35,7 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:textColor="@android:color/black"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />

@@ -112,7 +112,7 @@
                 android:layout_weight="1"
                 android:background="@color/transparent"
                 android:gravity="center"
-                android:src="@drawable/heart_outline"
+                android:src="@drawable/heart_open"
                 android:textColor="@android:color/white" />
 
             <ImageButton

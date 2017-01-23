@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "610244269931",
+    "firebase_url": "https://creately-10aa7.firebaseio.com",
+    "project_id": "creately-10aa7",
+    "storage_bucket": "creately-10aa7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610244269931:android:0318e9f65ad0c062",
+        "android_client_info": {
+          "package_name": "com.example.creately"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610244269931-pmavpimuv9rcb9ur5i6ga15eitk2gkot.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.creately",
+            "certificate_hash": "87062437389AD57782A55EF4D04485485A28FE94"
+          }
+        },
+        {
+          "client_id": "610244269931-pggnjsnt61s9tueq4fr71q4riuegdupd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBavdqyEKJ8JgNegwBngNkJtn5zctF2pE0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610244269931-pggnjsnt61s9tueq4fr71q4riuegdupd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -30,6 +30,25 @@ public class Items implements Serializable
 
     private String is_answered;
 
+    public Items()
+    {
+
+    }
+
+    public Items(String answer_count, String creation_date, String is_answered, String last_activity_date, String link, Owner owner, String question_id, String score, ArrayList<String> tags, String title, String view_count) {
+        this.answer_count = answer_count;
+        this.creation_date = creation_date;
+        this.is_answered = is_answered;
+        this.last_activity_date = last_activity_date;
+        this.link = link;
+        this.owner = owner;
+        this.question_id = question_id;
+        this.score = score;
+        this.tags = tags;
+        this.title = title;
+        this.view_count = view_count;
+    }
+
     public String getCreation_date ()
     {
         return creation_date;

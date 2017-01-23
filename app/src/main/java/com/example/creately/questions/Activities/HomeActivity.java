@@ -29,6 +29,7 @@ import com.example.creately.questions.Fragment.FavouriteFragment;
 import com.example.creately.questions.Fragment.HomeFragment;
 import com.example.creately.questions.Model.UnansweredQues.Items;
 import com.example.creately.questions.Utils.EndlessRecyclerOnScrollListener;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -61,6 +62,7 @@ public class HomeActivity extends AppCompatActivity  {
     public static String CURRENT_TAG = TAG_HOME;
     private Handler mHandler;
 
+
     @Override
     public void onBackPressed() {
 
@@ -68,6 +70,17 @@ public class HomeActivity extends AppCompatActivity  {
             drawer.closeDrawers();
             return;
         }
+
+
+
+            // checking if user is on other navigation menu
+            // rather than home
+            if (navItemIndex != 0) {
+                navItemIndex = 0;
+                CURRENT_TAG = TAG_HOME;
+                loadFragment();
+                return;
+            }
 
 
         this.finish();
@@ -88,6 +101,8 @@ public class HomeActivity extends AppCompatActivity  {
      //   imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
         loadNavHeader();
         setUpNavigationView();
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         if (savedInstanceState == null) {
             navItemIndex = 0;
@@ -178,6 +193,10 @@ public class HomeActivity extends AppCompatActivity  {
     }
 
     private void loadFragment() {
+        if(navItemIndex==0)
+            toolbarTitle.setText("QuesWiki");
+        else if(navItemIndex==1)
+            toolbarTitle.setText("Favourites");
         selectNavMenu();
 
         if (getFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
@@ -238,9 +257,7 @@ public class HomeActivity extends AppCompatActivity  {
     }
 
     private void selectNavMenu() {
-
             navigationView.getMenu().getItem(navItemIndex).setChecked(true);
-        
     }
 
 

@@ -43,6 +43,8 @@ import com.example.creately.questions.Model.Tag.Tags;
 import com.example.creately.questions.Model.UnansweredQues.Items;
 import com.example.creately.questions.Model.UnansweredQues.Questions;
 import com.example.creately.questions.Utils.EndlessRecyclerOnScrollListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.victor.loading.rotate.RotateLoading;
 
 import java.util.ArrayList;
@@ -90,6 +92,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private LinearLayoutManager linearLayoutManger;
     private EndlessRecyclerOnScrollListener endlessScrollListener;
     private Handler handler;
+   private DatabaseReference databaseReference;
 
 
     @Nullable
@@ -172,12 +175,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         listSearch = (RecyclerView) view.findViewById(R.id.list_search);
         final TextView txtEmpty = (TextView) view.findViewById(R.id.txt_empty);
 
-        toolbarSearchDialog = new Dialog(getActivity(), R.style.MaterialSearch){
+        toolbarSearchDialog = new Dialog(getActivity(), R.style.MaterialSearch) {
 
             @Override
             public void onBackPressed() {
 
-                    dismiss();
+                dismiss();
 
             }
         };
@@ -220,7 +223,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public void likeButtonClick(int position, ImageButton likebutton) {
+            public void likeButtonClick(int position, ImageButton likeButton) {
+
 
             }
 
@@ -289,7 +293,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         };
         recyclerView.setLayoutManager(linearLayoutManger);
         recyclerView.addOnScrollListener(endlessScrollListener);
-        questionsAdapter = new QuestionsAdapter(getActivity(), questionItems, recyclerView, new OnItemClickListener() {
+        questionsAdapter = new QuestionsAdapter(getActivity(), questionItems, recyclerView,false, new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 openQuesInBrowser(position);
@@ -309,12 +313,27 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public void likeButtonClick(int position, ImageButton likebutton) {
+            public void likeButtonClick(int position, ImageButton likeButton) {
 
+                if (likeButton.getTag().equals(R.drawable.heart_open)) {
+                    likeButton.setImageResource(R.drawable.heart_close);
+                    likeButton.setTag(R.drawable.heart_close);
+                    writeDbToFirebase(questionItems,position);
+                } else {
+                    likeButton.setImageResource(R.drawable.heart_open);
+                    likeButton.setTag(R.drawable.heart_open);
+                }
 
             }
         });
         recyclerView.setAdapter(questionsAdapter);
+    }
+
+    private void writeDbToFirebase(ArrayList<Items> questionItems,int position) {
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("favQuestions/"+questionItems.get(position).getQuestion_id()).setValue(questionItems.get(position));
+
     }
 
     private void openQuesInBrowser(int position) {

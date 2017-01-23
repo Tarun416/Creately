@@ -35,12 +35,14 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
     private Context context;
     private ArrayList<Items> questionItems;
     private OnItemClickListener onItemClickListener;
+    private Boolean favouritepage;
 
 
-    public QuestionsAdapter(Context context, ArrayList<Items> questionItems, RecyclerView recyclerView, OnItemClickListener onItemClickListener) {
+    public QuestionsAdapter(Context context, ArrayList<Items> questionItems, RecyclerView recyclerView,Boolean fav, OnItemClickListener onItemClickListener) {
         this.questionItems = questionItems;
         this.context = context;
         this.onItemClickListener = onItemClickListener;
+        favouritepage=fav;
     }
 
 
@@ -63,6 +65,14 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             holder.tags.append(items.getTags().get(i) + " ");
         }
         holder.timeStamp.setText(CommonUtils.toRelativeTime(new DateTime(Long.parseLong(items.getLast_activity_date()) * 1000, DateTimeZone.getDefault())));
+
+        holder.likeButton.setImageResource(R.drawable.heart_open);
+        holder.likeButton.setTag(R.drawable.heart_open);
+
+        if(favouritepage) {
+            holder.likeButton.setImageResource(R.drawable.heart_close);
+            holder.likeButton.setTag(R.drawable.heart_close);
+        }
 
 
     }
@@ -106,6 +116,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             ButterKnife.bind(this, itemView);
             cardContainer.setOnClickListener(this);
             shareButton.setOnClickListener(this);
+            likeButton.setOnClickListener(this);
         }
 
         @Override
@@ -122,7 +133,9 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
                         onItemClickListener.share(position);
                         break;
                     case R.id.likebutton:
+                        Log.d("inside","yes");
                         onItemClickListener.likeButtonClick(position, likeButton);
+
                         break;
                 }
 
